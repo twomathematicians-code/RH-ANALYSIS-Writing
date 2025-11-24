@@ -1,0 +1,210 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{pgfplotstable}
+\usepackage{csvsimple}
+\usepackage{xcolor}
+\usepackage{beton}
+\usepackage{amssymb}
+\usepackage[nottoc]{tocbibind}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[]{natbib}
+\setcitestyle{authoryear,open={(},close={)}}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{threeparttable}
+
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+\graphicspath{{out/}} % look for figures in out/
+
+\sisetup{
+  round-mode          = figures,
+  round-precision     = 3,
+  detect-all,
+  input-symbols       = ( ) [ ] - + ,
+  table-number-alignment = center,
+}
+
+%%% START MAKING CHANGES HERE!
+
+%%% Group details - PLEASE PUT YOUR GROUP NUMBER HERE!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\clearpage\thispagestyle{empty}
+
+\begin{center}
+	% title
+	\textbf{\huge{Exploring the Factors which Associated with Violent Crime Rate among US 
+    Communities }} \\[1.5cm]
+	% details
+	\Large{
+	Project: Continuous Data Analysis \\
+	2025-2026 \\[0.5cm]
+	Protocol: Multivariate Regression  \\
+	MaStat - Gent University	
+	}
+\end{center}
+
+\vspace*{1cm}
+\textbf{\large{Group members:}}\\
+Mahesh Pravinsinh Solanki             (02502137) \\
+Furaha Maine Chaula(02504472) \\
+
+
+\noindent\textit{Submission Date:} \today
+\vspace*{2.5cm}\\
+\textbf{\large{Lecturers:}}\\
+Mr. Dries Reynders \\
+Professor Els Goetghebeur \\
+
+
+\newpage\setcounter{page}{1}
+\section{Introduction}
+\subsection{Background and Retionale}
+In a violent crime, a victim is harmed by or threatened with violence. Violent crimes include rape and sexual assault, robbery, assault and murder\citep{NIJViolentCrime}.
+Violent crime imposes substantial social and economical impact, yet it is rapidly increasing across U.S. communities \citep{rachuba1995violent}.
+Historical evidence shows that victimization is growing with respect to different variables like age, education, neighborhood social processes and prior working status which are most impactful variables for shaping community-level violence. 
+This study will give an insight into how differences in community characteristics affects the occurrence of violent crime.
+% importance of doin this study
+
+\subsection{Objectives}
+\begin{itemize}
+    \item \textbf{Primary objective:} To identify economic and sociodemographic factors associated with the number of crimes among US communities.
+    \item \textbf{Secondary objective:} To what extent does poverty explain the occurrence of violent crimes among US communities. Assessing this association per urbanization level.   
+\end{itemize}
+
+%%%%%%
+%pri.obj:Which scoioecomic, demographic, racial, and policing characterstics jointly explain variation in voilent crime rates across U.S communities?
+%sec.obj: After the univariate stage, we extend the modelling to: 
+%To what extent do poverty (PctPopUnderPov), racial composition (racepctblack), education levels, income, and urbanization jointly influence the rate of violent crimes per 100K population? 
+%We investigate whether these variables act: as confounders, as independent predictors, or interactively (effect modification).
+ 
+%%%%%%
+
+\section{Data}
+\subsection{Data description}
+The study will consider the data set which combine socio-economic data from the ’90 Census, law enforcement
+data from the 1990 Law Enforcement Management and Admin Stats Survey, as well as crime data from the 1995 FBI UCR for 2215 American communities\citep{communities_and_crime_unnormalized_211}. Among 147 attributes, this project will consider 21 as variables to answer the research questions.   
+
+\begin{table}[h]
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{0.95}
+\caption{Table for the data description}
+\label{tab:vars_themes}
+
+\begin{threeparttable}
+\begin{tabularx}{\linewidth}{l X}
+\toprule
+\textbf{Theme} & \textbf{Variables} \\
+\midrule
+Demographics & \texttt{population} (N-int), \texttt{householdsize} (N-dec), \texttt{agePct12t29} (N-dec), \texttt{state} (C), \texttt{communityname} (C) \\
+Race/Ethnicity & \texttt{racepctblack}, \texttt{racePctWhite}, \texttt{racePctAsian}, \texttt{racePctHisp} (all N-dec) \\
+Socioeconomic & \texttt{medIncome}, \texttt{perCapInc}, \texttt{PctPopUnderPov} (all N-dec) \\
+Education & \texttt{PctLess9thGrade}, \texttt{PctNotHSGrad}, \texttt{PctBSorMore} (all N-dec) \\
+Urbanization & \texttt{pctUrban} (N-dec) \\
+Labor market & \texttt{PctEmploy}, \texttt{PctUnemploy} (both N-dec) \\
+Migration & \texttt{NumImmig} (N-int) \\
+Policing & \texttt{PolicPerPop} (N-dec) \\
+Outcome & \texttt{ViolentCrimesPerPop} (N-dec) \\
+\bottomrule
+\end{tabularx}
+
+\begin{tablenotes}[flushleft]
+\footnotesize
+\item \textit{Note.} Types: N-int = numeric integer; N-dec = numeric decimal; C = categorical.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Data cleaning and Handling missing values}
+
+The given data will be checked for the missing information and being cleaned. The missingness will be handled by considering the amount(in \%) and patternwise. Hence, a specific method such as deletion, or imputation, will be applied based on the nature of the missingness.  
+
+We will ingest the raw TXT, explicitly treating ?, NA, \#N/A and blank as missing, and we will map the header to the 21 project variables. communityname and state will kept as strings, while all other fields will remain unchanged as numeric.
+
+\subsection{Variable description and selection}
+A continuous response variable as total number of violent crimes per 100k population(decimal) will be considered. Selection of the potential predictors for answering the primary question will be determined by literature review and correlation matrix among all the socioeconomic and demographic factors; see Table.\ref{tab:vars_themes}. However, predictors for answering the secondary question will be poverty(PctPopUnderPov) for the univariate regression, and then the model will be adjusted with the urban level under multiple regression. 
+
+%were chosen based on literature review and research questions. The following are the selected predictors; race, considering African american population(racepcblack)\cite{}, Poverty: by considering people under poverty level(PctPopUnderPov)\citep{clemmow2025evidence}.
+
+%; and Education: by considering non- high school graduates(PctLess9thGrade)\cite{lochner2020education}. 
+
+%Variables to be considered for the study, will be selected based on research questions interest and literature review.
+
+\subsection{Statistical software}
+All the analysis for this study, will be conducted using R software and at 5\% significance level. 
+
+\section{Methodology}
+\subsection{Explorational data analysis}
+The summary statistics, histogram  and boxplot will be used to explore the distribution of the continuous outcome variable (Total number of crimes per 100k population).
+
+\subsection{Model building}
+80\% of the cleaned data set will be used as trained data for model building, while 20\% will be used for validation.
+\subsubsection{Univariate regression}
+A simple linear regression(SLR) model will be fitted to answer the secondary objective of the study. The model equation \citep{weisberg2005applied} is given by:
+
+\begin{equation}
+{Y_i} = {\beta_0} + {\beta_1}{x_i} +{\epsilon_i}  \label{eq:SLR}
+\end{equation}
+
+where; 
+\begin{itemize}
+    \item $i=1,2,\ldots,n$; observed communities
+    \item $Y_i$: a continuous outcome; observed number of violent crimes per 100K population, for community $i$.
+    \item $x_i$: predictor: percentage of people under the poverty level in community i 
+    \item ${\beta_0}$, ${\beta_1}$: parameters to be estimated
+%    \item ${\beta_0}$ is intercept; expected violent crime rate at $\it{PctPopUnderPov_i}$=0 
+ %   \item ${\beta_1}$ is slope; shows mean change in violent crimes for each one-unit change in poverty percentage level.
+    \item $\varepsilon_i \sim \text{i.i.d. } N(0,\sigma^2)$ for $i = 1, \ldots, n$(communities)
+\end{itemize}
+
+\subsubsection{Interaction Model}
+The SLR model.\ref{eq:SLR}, will be adjusted with variable '$pctUrban$'(percentage of people living in areas classified as urban) with interaction $PctPopUnderPov \times pctUrban$, to answer part of secondary question.
+
+\subsubsection{Multivariate regression}
+A multiple linear regression(MLR) will be fitted by adjusting the SLR model.\ref{eq:SLR} with the selected predictors based on literature review and correlation matrix. The general MLR equation \citep{weisberg2005applied} is given as:
+
+\begin{equation}
+Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \cdots 
+      + \beta_{p-1} x_{i,p-1} + \varepsilon_i
+\end{equation}
+
+with
+
+\begin{itemize}
+  \item $Y_i$: a continuous outcome; observed number of violent crimes per 100K population, for community $i$.  
+  \item $\beta_0, \beta_1, \ldots, \beta_{p-1}$: parameters to be estimated
+  \item $x_{i1}, x_{i2}, \ldots, x_{i,p-1}$ potential predictors selected
+  \item $\varepsilon_i \sim \text{i.i.d. } N(0,\sigma^2)$ for $i = 1, \ldots, n$(communities)
+\end{itemize}
+
+
+\subsubsection{Model assumptions check}
+After model fitting, then their assumptions will be checked using QQplot for normality and residual plots for linearity, and constant variance. In case if the assumptions are not met, a response variable will be transformed and then refitted again.
+
+
+%\section*{Appendix: Reproducibility}
+
+
+
+
+\clearpage
+\bibliographystyle{agsm}
+\bibliography{Reference.bib}
+%\newpage
+%\section*{Appendix}
+
+\end{document}
+
